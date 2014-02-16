@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Solution SolutionId="4b39707b-ac22-4ad0-afc9-1dcf142968db" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <FeatureManifests>
+    <FeatureManifest Location="CacheMTC\feature.xml"/>
+  </FeatureManifests>
+   <Assemblies>
+    <Assembly  DeploymentTarget="GlobalAssemblyCache" Location="CacheMTC\CacheMTC.dll"/>
+  </Assemblies>
+</Solution> 

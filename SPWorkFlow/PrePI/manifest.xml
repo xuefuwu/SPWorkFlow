@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Solution SolutionId="542e0fbd-38aa-443e-bd41-f6e2619bc113" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <FeatureManifests>
+    <FeatureManifest Location="PrePI\feature.xml"/>
+  </FeatureManifests>
+   <Assemblies>
+    <Assembly  DeploymentTarget="GlobalAssemblyCache" Location="PrePI\PrePI.dll"/>
+  </Assemblies>
+</Solution> 

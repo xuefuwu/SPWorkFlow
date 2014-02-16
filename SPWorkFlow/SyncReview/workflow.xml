@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- 自定义方括号中的文本。
+填写时，请移除方括号，例如
+Name="[名称]" ==> Name="MyWorkflow"-->
+
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <Workflow
+     Name="SyncReview"
+     Description="My SharePoint Workflow"
+     Id="cbf77391-016e-412f-aa90-f3ba0ca20fa3"
+     CodeBesideClass="SyncReview.Workflow1"
+     CodeBesideAssembly="SyncReview, Version=1.0.0.0, Culture=neutral, PublicKeyToken=08b6992fb101455b">
+
+    <Categories/>
+    <MetaData>
+      <!-- 用于指定 InfoPath 工作流窗体的标记；对于您没有的窗体，请删除标记-->
+      <!--<Association_FormURN>[关联窗体的 URN]</Association_FormURN>
+       <Instantiation_FormURN>[实例化窗体的 URN]</Instantiation_FormURN>
+      <Task0_FormURN>[任务(类型 0)窗体的 URN]</Task0_FormURN>
+      <Task1_FormURN>[任务(类型 1)窗体的 URN]</Task1_FormURN>-->
+      <!-- 修改窗体: 为每个修改窗体创建唯一的 GUID-->
+      <!--<Modification_[唯一的 GUID]_FormURN>[修改窗体的 URN]</Modification_[唯一的 GUID]_FormURN>
+      <Modification_[唯一的 GUID]_Name>[将在工作流状态页上显示为链接的修改名称]</Modification_[唯一的 GUID]_Name>
+      -->
+      <StatusPageUrl>_layouts/WrkStat.aspx</StatusPageUrl>
+    </MetaData>
+  </Workflow>
+</Elements>

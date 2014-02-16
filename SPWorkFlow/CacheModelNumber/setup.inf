@@ -1,0 +1,21 @@
+;*** BEGIN **********************************************************
+;**                                                                **
+;** Automatically generated on: Thu Feb 13 13:58:33 2014           **
+;**                                                                **
+;** MakeCAB Version: 5.2.3790.0                     **
+;**                                                                **
+;*** BEGIN **********************************************************
+[disk list]
+1,Disk 1
+[cabinet list]
+1,1,CacheModelNumber.wsp
+[file list]
+1,1,manifest.xml,415
+1,1,CacheModelNumber\workflow.xml,1411
+1,1,CacheModelNumber\feature.xml,898
+1,1,CacheModelNumber\CacheModelNumber.dll,78336
+;*** END ************************************************************
+;**                                                                **
+;** Automatically generated on: Thu Feb 13 13:58:33 2014           **
+;**                                                                **
+;*** END ************************************************************

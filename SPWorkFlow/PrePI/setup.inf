@@ -1,0 +1,21 @@
+;*** BEGIN **********************************************************
+;**                                                                **
+;** Automatically generated on: Fri Feb 14 13:53:14 2014           **
+;**                                                                **
+;** MakeCAB Version: 5.2.3790.0                     **
+;**                                                                **
+;*** BEGIN **********************************************************
+[disk list]
+1,Disk 1
+[cabinet list]
+1,1,PrePI.wsp
+[file list]
+1,1,manifest.xml,382
+1,1,PrePI\workflow.xml,1378
+1,1,PrePI\feature.xml,887
+1,1,PrePI\PrePI.dll,26624
+;*** END ************************************************************
+;**                                                                **
+;** Automatically generated on: Fri Feb 14 13:53:14 2014           **
+;**                                                                **
+;*** END ************************************************************

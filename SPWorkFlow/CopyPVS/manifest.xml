@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Solution SolutionId="a452ff2b-d60d-407e-b721-b16269ca693e" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <FeatureManifests>
+    <FeatureManifest Location="CopyPVS\feature.xml"/>
+  </FeatureManifests>
+   <Assemblies>
+    <Assembly  DeploymentTarget="GlobalAssemblyCache" Location="CopyPVS\CopyPVS.dll"/>
+  </Assemblies>
+</Solution> 

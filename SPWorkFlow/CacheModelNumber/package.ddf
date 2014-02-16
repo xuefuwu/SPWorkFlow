@@ -1,0 +1,14 @@
+;
+.OPTION EXPLICIT                     ; Generate errors
+.Set CabinetNameTemplate=CacheModelNumber.wsp
+.Set CompressionType=MSZIP           ; All files are compressed in cabinet files
+.set DiskDirectoryTemplate=CDROM     ; All cabinets go in a single directory
+.Set UniqueFiles="ON"
+.Set Cabinet=on
+.Set DiskDirectory1=C:\Documents and Settings\Administrator\My Documents\Visual Studio 2008\Projects\SPWorkFlow\CacheModelNumber 
+"manifest.xml" "manifest.xml"
+"workflow.xml" "CacheModelNumber\workflow.xml"
+"feature.xml" "CacheModelNumber\feature.xml"
+"bin\Debug\CacheModelNumber.dll" "CacheModelNumber\CacheModelNumber.dll"
+
+;

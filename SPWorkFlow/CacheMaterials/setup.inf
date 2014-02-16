@@ -1,0 +1,21 @@
+;*** BEGIN **********************************************************
+;**                                                                **
+;** Automatically generated on: Thu Feb 13 13:58:43 2014           **
+;**                                                                **
+;** MakeCAB Version: 5.2.3790.0                     **
+;**                                                                **
+;*** BEGIN **********************************************************
+[disk list]
+1,Disk 1
+[cabinet list]
+1,1,CacheMaterials.wsp
+[file list]
+1,1,manifest.xml,409
+1,1,CacheMaterials\workflow.xml,1405
+1,1,CacheMaterials\feature.xml,896
+1,1,CacheMaterials\CacheMaterials.dll,44032
+;*** END ************************************************************
+;**                                                                **
+;** Automatically generated on: Thu Feb 13 13:58:43 2014           **
+;**                                                                **
+;*** END ************************************************************

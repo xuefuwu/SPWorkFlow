@@ -1,0 +1,14 @@
+;
+.OPTION EXPLICIT                     ; Generate errors
+.Set CabinetNameTemplate=CacheExportRecord.wsp
+.Set CompressionType=MSZIP           ; All files are compressed in cabinet files
+.set DiskDirectoryTemplate=CDROM     ; All cabinets go in a single directory
+.Set UniqueFiles="ON"
+.Set Cabinet=on
+.Set DiskDirectory1=C:\Documents and Settings\Administrator\My Documents\Visual Studio 2008\Projects\SPWorkFlow\CacheExportRecord 
+"manifest.xml" "manifest.xml"
+"workflow.xml" "CacheExportRecord\workflow.xml"
+"feature.xml" "CacheExportRecord\feature.xml"
+"bin\Debug\CacheExportRecord.dll" "CacheExportRecord\CacheExportRecord.dll"
+
+;

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Feature  Id="d9c765ca-ac0b-4377-b018-7eda37a8a2c1"
+      Title="CacheMTC feature"
+      Description="My SharePoint Workflow Feature"
+      Version="12.0.0.0"
+      Scope="Site"
+      ReceiverAssembly="Microsoft.Office.Workflow.Feature, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c"
+      ReceiverClass="Microsoft.Office.Workflow.Feature.WorkflowFeatureReceiver"
+      xmlns="http://schemas.microsoft.com/sharepoint/">
+  <ElementManifests>
+    <ElementManifest Location="workflow.xml" />
+  </ElementManifests>
+  <Properties>
+    <Property Key="GloballyAvailable" Value="true" />
+
+    <!-- RegisterForms 注册表项的值指示相对于功能文件位置的窗体路径。-->
+    <!-- 如果没有窗体，请使用 *.xsn-->
+    <Property Key="RegisterForms" Value="*.xsn" />
+  </Properties>
+</Feature>

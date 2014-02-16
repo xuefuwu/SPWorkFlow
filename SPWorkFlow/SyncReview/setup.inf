@@ -1,0 +1,21 @@
+;*** BEGIN **********************************************************
+;**                                                                **
+;** Automatically generated on: Thu Feb 13 16:34:02 2014           **
+;**                                                                **
+;** MakeCAB Version: 5.2.3790.0                     **
+;**                                                                **
+;*** BEGIN **********************************************************
+[disk list]
+1,Disk 1
+[cabinet list]
+1,1,SyncReview.wsp
+[file list]
+1,1,manifest.xml,397
+1,1,SyncReview\workflow.xml,1393
+1,1,SyncReview\feature.xml,892
+1,1,SyncReview\SyncReview.dll,18944
+;*** END ************************************************************
+;**                                                                **
+;** Automatically generated on: Thu Feb 13 16:34:02 2014           **
+;**                                                                **
+;*** END ************************************************************

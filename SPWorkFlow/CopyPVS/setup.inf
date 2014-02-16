@@ -1,0 +1,21 @@
+;*** BEGIN **********************************************************
+;**                                                                **
+;** Automatically generated on: Thu Feb 13 13:58:55 2014           **
+;**                                                                **
+;** MakeCAB Version: 5.2.3790.0                     **
+;**                                                                **
+;*** BEGIN **********************************************************
+[disk list]
+1,Disk 1
+[cabinet list]
+1,1,CopyPVS.wsp
+[file list]
+1,1,manifest.xml,388
+1,1,CopyPVS\workflow.xml,1384
+1,1,CopyPVS\feature.xml,889
+1,1,CopyPVS\CopyPVS.dll,15872
+;*** END ************************************************************
+;**                                                                **
+;** Automatically generated on: Thu Feb 13 13:58:55 2014           **
+;**                                                                **
+;*** END ************************************************************

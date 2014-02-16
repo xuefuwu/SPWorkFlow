@@ -1,0 +1,33 @@
+﻿<StateMachineWorkflowDesigner xmlns:ns0="clr-namespace:System.Drawing;Assembly=System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" Name="Workflow1" Location="30, 30" Size="642, 469" AutoSize="False" AutoSizeMargin="16, 24" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/workflow">
+	<StateMachineWorkflowDesigner.DesignerConnectors>
+		<StateDesignerConnector TargetConnectionIndex="0" TargetStateName="approvalActivity1" SourceConnectionIndex="0" TargetConnectionEdge="Top" SetStateName="setStateActivity1" SourceStateName="StartApproval" SourceConnectionEdge="Right" TargetActivity="approvalActivity1" SourceActivity="StartApproval" EventHandlerName="eventDrivenActivity1">
+			<StateDesignerConnector.Segments>
+				<ns0:Point X="214" Y="110" />
+				<ns0:Point X="291" Y="110" />
+				<ns0:Point X="291" Y="252" />
+			</StateDesignerConnector.Segments>
+		</StateDesignerConnector>
+	</StateMachineWorkflowDesigner.DesignerConnectors>
+	<StateMachineWorkflowDesigner.Designers>
+		<StateDesigner Name="StartApproval" Location="46, 69" Size="222, 80" AutoSizeMargin="16, 24">
+			<StateDesigner.Designers>
+				<EventDrivenDesigner Size="150, 190" Name="eventDrivenActivity1" Location="54, 100">
+					<EventDrivenDesigner.Designers>
+						<HandleExternalEventActivityDesigner Size="130, 41" Name="onWorkflowActivated1" Location="64, 161" />
+						<SetStateDesigner Size="130, 50" Name="setStateActivity1" Location="64, 221" />
+					</EventDrivenDesigner.Designers>
+				</EventDrivenDesigner>
+			</StateDesigner.Designers>
+		</StateDesigner>
+		<StateDesigner Name="EndApproval" Location="420, 323" Size="160, 80" AutoSizeMargin="16, 24" />
+		<StateDesigner Name="approvalActivity1" Location="180, 252" Size="222, 80" AutoSize="False" AutoSizeMargin="16, 24">
+			<StateDesigner.Designers>
+				<StateInitializationDesigner Size="150, 121" Name="stateInitializationActivity1" Location="276, 148">
+					<StateInitializationDesigner.Designers>
+						<CallExternalMethodActivityDesigner Size="130, 41" Name="createPreApprovalTask" Location="286, 209" />
+					</StateInitializationDesigner.Designers>
+				</StateInitializationDesigner>
+			</StateDesigner.Designers>
+		</StateDesigner>
+	</StateMachineWorkflowDesigner.Designers>
+</StateMachineWorkflowDesigner>
