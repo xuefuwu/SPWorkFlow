@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Solution SolutionId="7ba23a63-e047-407d-b6bf-145a64d0fa13" xmlns="http://schemas.microsoft.com/sharepoint/">
+<Solution SolutionId="7138f61d-8083-46ee-bdbc-7b52667bbdb3" xmlns="http://schemas.microsoft.com/sharepoint/">
   <FeatureManifests>
     <FeatureManifest Location="SyncReview\feature.xml"/>
   </FeatureManifests>

@@ -15,6 +15,7 @@ using Microsoft.SharePoint;
 using Microsoft.SharePoint.Workflow;
 using Microsoft.SharePoint.WorkflowActions;
 using Microsoft.Office.Workflow.Utility;
+using System.Data;
 
 namespace CacheExportRecord
 {
@@ -84,5 +85,108 @@ namespace CacheExportRecord
                 }
             }
         }
+
+        private void SyncToOR_ExecuteCode(object sender, EventArgs e)
+        {
+            using (SPWeb web = workflowProperties.Web)
+            {
+                SPList ExportList = workflowProperties.List;
+                SPList orderCNList = web.GetList("/EngineeringandQuality/Lists/OrdersCN");
+                SPList orderUSList = web.GetList("/EngineeringandQuality/Lists/OrdersUS");
+                SPListItemCollection orderCNItems = orderCNList.Items;
+                SPListItemCollection orderUSItems = orderUSList.Items;
+                String itemPINo = workflowProperties.Item["Proforma Invoice"].ToString();
+                String[] strPINo = itemPINo.Split(',');
+                foreach (String PINo in strPINo)
+                {
+                    DataRowCollection orderCNRow = getOrderCN(PINo, web).Rows;
+                    DataRowCollection orderUSRow = getOrderUS(PINo, web).Rows;
+                    if (orderCNRow.Count > 0)
+                    {
+                        SPListItem orderItem = orderCNItems.GetItemById(int.Parse(orderCNRow[0]["ID"].ToString()));
+                        orderItem[orderCNList.Fields["Documents Sent"].InternalName] = workflowProperties.Item["_x5ba2__x6237__x6587__x4ef6__x5b"];
+                        orderItem.Update();
+                    }
+                    else if (orderUSRow.Count > 0)
+                    {
+                        SPListItem orderItem = orderUSItems.GetItemById(int.Parse(orderUSRow[0]["ID"].ToString()));
+                        orderItem[orderUSList.Fields["Documents Sent"].InternalName] = workflowProperties.Item["_x5ba2__x6237__x6587__x4ef6__x5b"];
+                        orderItem.Update();
+                    }
+                }
+            }
+        }
+        #region Query Method
+        private System.Data.DataTable getOrderCN(String PINo, SPWeb oWebSite)
+        {
+            SPList ReviewList = oWebSite.GetList("/EngineeringandQuality/Lists/OrdersCN");
+            String[] ViewFields = { ReviewList.Fields["ID"].InternalName };
+            String Query = "<Where>" +
+                              "<Eq>" +
+                                "<FieldRef Name=\"" + ReviewList.Fields["FBV PI No."].InternalName + "\" />" +
+                                "<Value Type=\"Text\">" + PINo + "</Value>" +
+                              "</Eq>" +
+                           "</Where>";
+            return getSiteDataQuery(Query, ViewFields, ReviewList, oWebSite);
+        }
+
+        private System.Data.DataTable getOrderUS(String PINo, SPWeb oWebSite)
+        {
+            SPList ReviewList = oWebSite.GetList("/EngineeringandQuality/Lists/OrdersUS");
+            String[] ViewFields = { ReviewList.Fields["ID"].InternalName };
+            String Query = "<Where>" +
+                              "<Eq>" +
+                                "<FieldRef Name=\"" + ReviewList.Fields["FBV PI No."].InternalName + "\" />" +
+                                "<Value Type=\"Text\">" + PINo + "</Value>" +
+                              "</Eq>" +
+                           "</Where>";
+            return getSiteDataQuery(Query, ViewFields, ReviewList, oWebSite);
+        }
+
+        private System.Data.DataTable getDrawing(String InquiryNo, String Quoted, SPWeb oWebSite)
+        {
+            SPList ReviewList = oWebSite.GetList("/EngineeringandQuality/Lists/Request%20For%20Drawings");
+            String[] ViewFields = { ReviewList.Fields["ID"].InternalName };
+            String Query = "<Where>" +
+                          "<And>" +
+                          "<Eq>" +
+                            "<FieldRef Name=\"" + ReviewList.Fields["Inquiry No."].InternalName + "\" />" +
+                            "<Value Type=\"Text\">" + InquiryNo + "</Value>" +
+                          "</Eq>" +
+                          "<Eq>" +
+                            "<FieldRef Name=\"" + ReviewList.Fields["Supplier"].InternalName + "\" />" +
+                            "<Value Type=\"Lookup\">" + Quoted + "</Value>" +
+                          "</Eq>" +
+                          "</And>" +
+                          "</Where>";
+            return getSiteDataQuery(Query, ViewFields, ReviewList, oWebSite);
+        }
+        private System.Data.DataTable getQuoted(String inquiry, SPWeb oWebSite)
+        {
+            SPList InquiryList = oWebSite.GetList("/teamwork/Lists/InquirySystem");
+            String[] ViewFields = { InquiryList.Fields["Quoted By"].InternalName, InquiryList.Fields["Qty"].InternalName, InquiryList.Fields["完整描述"].InternalName, "Author", InquiryList.Fields["ID"].InternalName, InquiryList.Fields["价格"].InternalName, InquiryList.Fields["Model Number"].InternalName, InquiryList.Fields["询单号"].InternalName };
+            String Query = "<Where>" +
+                          "<Eq>" +
+                            "<FieldRef Name=\"" + InquiryList.Fields["询单号"].InternalName + "\" />" +
+                            "<Value Type=\"Text\">" + inquiry + "</Value>" +
+                          "</Eq>" +
+                           "</Where>";
+            return getSiteDataQuery(Query, ViewFields, InquiryList, oWebSite);
+        }
+        private System.Data.DataTable getSiteDataQuery(String Query, String[] ViewField, SPList QList, SPWeb web)
+        {
+            System.Data.DataTable dt = null;
+            SPSiteDataQuery query = new SPSiteDataQuery();
+            query.Lists = string.Format("<Lists><List ID=\"{0}\" /></Lists>", QList.ID);
+            for (int i = 0; i < ViewField.Length; i++)
+            {
+                query.ViewFields += "<FieldRef Name=\"" + ViewField[i] + "\" />";
+            }
+            query.Query = Query;
+            query.Webs = "<Webs Scope=\"Recursive\" />";
+            dt = web.GetSiteData(query);
+            return dt;
+        }
+        #endregion
     }
 }

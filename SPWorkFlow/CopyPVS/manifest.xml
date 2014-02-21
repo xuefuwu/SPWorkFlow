@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Solution SolutionId="a452ff2b-d60d-407e-b721-b16269ca693e" xmlns="http://schemas.microsoft.com/sharepoint/">
+<Solution SolutionId="17fd913e-7611-4d10-bc5b-c4bfcc68b9e4" xmlns="http://schemas.microsoft.com/sharepoint/">
   <FeatureManifests>
     <FeatureManifest Location="CopyPVS\feature.xml"/>
   </FeatureManifests>

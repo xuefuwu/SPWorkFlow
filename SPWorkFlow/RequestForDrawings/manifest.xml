@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Solution SolutionId="47928041-5b26-473c-92dd-515176c30256" xmlns="http://schemas.microsoft.com/sharepoint/">
+<Solution SolutionId="01b566d3-57e9-4425-82dd-51fde945da96" xmlns="http://schemas.microsoft.com/sharepoint/">
   <FeatureManifests>
     <FeatureManifest Location="RequestForDrawings\feature.xml"/>
   </FeatureManifests>

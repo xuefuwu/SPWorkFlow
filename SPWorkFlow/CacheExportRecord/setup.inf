@@ -1,6 +1,6 @@
 ;*** BEGIN **********************************************************
 ;**                                                                **
-;** Automatically generated on: Thu Feb 13 13:59:00 2014           **
+;** Automatically generated on: Fri Feb 21 09:27:36 2014           **
 ;**                                                                **
 ;** MakeCAB Version: 5.2.3790.0                     **
 ;**                                                                **
@@ -13,9 +13,9 @@
 1,1,manifest.xml,418
 1,1,CacheExportRecord\workflow.xml,1414
 1,1,CacheExportRecord\feature.xml,899
-1,1,CacheExportRecord\CacheExportRecord.dll,8704
+1,1,CacheExportRecord\CacheExportRecord.dll,12288
 ;*** END ************************************************************
 ;**                                                                **
-;** Automatically generated on: Thu Feb 13 13:59:00 2014           **
+;** Automatically generated on: Fri Feb 21 09:27:36 2014           **
 ;**                                                                **
 ;*** END ************************************************************

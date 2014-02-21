@@ -17,11 +17,14 @@ using Microsoft.SharePoint.WorkflowActions;
 using Microsoft.Office.Workflow.Utility;
 using System.Data;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PrePI
 {
     public sealed partial class Workflow1 : SequentialWorkflowActivity
     {
+        byte[] bomBuffer = new byte[] { 0xef, 0xbb, 0xbf };
         public Workflow1()
         {
             InitializeComponent();
@@ -52,7 +55,7 @@ namespace PrePI
         {
             SPSiteDataQuery query = new SPSiteDataQuery();
             SPList InquiryList = oWebSite.GetList("/teamwork/Lists/InquirySystem");
-            String[] ViewFields = { InquiryList.Fields["Quoted By"].InternalName, InquiryList.Fields["Qty"].InternalName, InquiryList.Fields["ID"].InternalName, InquiryList.Fields["询单号"].InternalName, InquiryList.Fields["完整描述"].InternalName, "Author", InquiryList.Fields["价格"].InternalName, InquiryList.Fields["Model Number"].InternalName };
+            String[] ViewFields = { InquiryList.Fields["Quoted By"].InternalName, InquiryList.Fields["Qty"].InternalName, InquiryList.Fields["ID"].InternalName, InquiryList.Fields["询单号"].InternalName, InquiryList.Fields["完整描述"].InternalName, "Author", "ID", InquiryList.Fields["价格"].InternalName, InquiryList.Fields["Model Number"].InternalName };
             String Query = "<Where>" +
                           "<Eq>" +
                             "<FieldRef Name=\"" + InquiryList.Fields["ID"].InternalName + "\" />" +
@@ -143,7 +146,7 @@ namespace PrePI
             return getSiteDataQuery(Query, ViewFields, ReviewList, oWebSite);
         }
 
-        private DataTable getOrderItems(string InquiryNo, string ModelNumber,string Id, SPWeb oWebSite)
+        private DataTable getOrderItems(string InquiryNo, string ModelNumber, string Id, SPWeb oWebSite)
         {
             SPSiteDataQuery query = new SPSiteDataQuery();
             SPList ReviewList = oWebSite.GetList("/teamwork/Lists/Order%20Items");
@@ -243,6 +246,26 @@ namespace PrePI
             return getSiteDataQuery(Query, ViewFields, ReviewList, oWebSite);
         }
 
+        private System.Data.DataTable getDrawingInfo(String InquiryNo, String ItemType, SPWeb oWebSite)
+        {
+            SPList ReviewList = oWebSite.GetList("/EngineeringandQuality/Lists/Drawing%20Information");
+            String[] ViewFields = { ReviewList.Fields["ID"].InternalName };
+            String Query = "<Where>" +
+                          "<And>" +
+                          "<Eq>" +
+                            "<FieldRef Name=\"" + ReviewList.Fields["ItemNo"].InternalName + "\" />" +
+                            "<Value Type=\"Text\">" + InquiryNo + "</Value>" +
+                          "</Eq>" +
+                          "<Eq>" +
+                            "<FieldRef Name=\"" + ReviewList.Fields["ItemType"].InternalName + "\" />" +
+                            "<Value Type=\"Text\">" + ItemType + "</Value>" +
+                          "</Eq>" +
+                          "</And>" +
+                          "</Where>";
+            return getSiteDataQuery(Query, ViewFields, ReviewList, oWebSite);
+        }
+
+
         private DataTable getSiteDataQuery(String Query, String[] ViewField, SPList QList, SPWeb web)
         {
             DataTable dt = null;
@@ -299,6 +322,19 @@ namespace PrePI
             }
             return rtn;
         }
+        public Boolean ContainRequiryAttachment(String fileName, SPAttachmentCollection attachs)
+        {
+            bool rtn = false;
+            foreach (String attach in attachs)
+            {
+                if (fileName.Equals(attach))
+                {
+                    rtn = true;
+                }
+            }
+            return rtn;
+        }
+
         private static SPFieldLookupValue ConvertToLookupValue(string lookupField)
         {
             if (string.IsNullOrEmpty(lookupField)) return null;
@@ -416,10 +452,11 @@ namespace PrePI
             if (workflowProperties.Item["For Drawing"] != null && !workflowProperties.Item["For Drawing"].Equals(""))
             {
                 String inquiryNo = workflowProperties.Item["Inquiry Number"].ToString();
-                using (SPSite site = new SPSite("http://localhost/"))
+                using (SPSite site = new SPSite("http://localhost/EngineeringandQuality/default.aspx"))
                 {
                     using (SPWeb web = site.OpenWeb())
                     {
+                        int itemNum = 1;
                         DataTable QuotedBy = getQuoted(inquiryNo, workflowProperties.Web);
                         SPList InquiryList = workflowProperties.Web.GetList("/teamwork/Lists/InquirySystem");
                         SPList drawingList = web.GetList("/EngineeringandQuality/Lists/Request%20For%20Drawings");
@@ -428,7 +465,7 @@ namespace PrePI
                         SPListItemCollection drawingInfoItems = drawingInfoList.Items;
                         //SPFieldLookupValueCollection ItemsCollection = (SPFieldLookupValueCollection)this.workflowProperties.Item["For Drawing"];
                         String ForDrawings = workflowProperties.Item["For Drawing"].ToString();
-
+                        SPListItem drawingItem = default(SPListItem);
                         //foreach (DataRow row in QuotedBy.Rows)
                         String[] forDrawings = new string[1];
                         if (ForDrawings.IndexOf("#") > -1)
@@ -439,6 +476,12 @@ namespace PrePI
                         {
                             forDrawings[0] = ForDrawings;
                         }
+                        StringBuilder strColu = new StringBuilder();
+                        strColu.Append("\"Model Number\"");
+                        strColu.Append(",");
+                        strColu.Append("\"Full Description\"");
+                        strColu.Append(",");
+                        strColu.AppendLine("\"Supplier Comments\"");
                         foreach (String oItem in forDrawings)
                         {
                             DataRowCollection Rows = getInquiryByID(oItem, workflowProperties.Web).Rows;
@@ -448,35 +491,81 @@ namespace PrePI
 
                             DataRow row = Rows[0];
                             DataRowCollection drawingRows = getDrawing(inquiryNo, row[InquiryList.Fields["Quoted By"].InternalName].ToString().Split('#')[1], web).Rows;
+
+                            strColu.Append("\"" + row["Title"].ToString().Replace("'", "''").Replace(",", "，") + "\"");
+                            strColu.Append(",");
+                            Regex htmlReg = new Regex(@"<[^>]+>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                            strColu.AppendLine("\"" + htmlReg.Replace(row["_x5b8c__x6574__x63cf__x8ff0_"].ToString().Replace("'", "''").Replace(",", "，"), string.Empty) + "\"");
                             if (drawingRows.Count == 0)
                             {
-                                SPListItem drawingItem = drawingItems.Add();
+
+                                drawingItem = drawingItems.Add();
                                 drawingItem["Title"] = PINUM;
                                 drawingItem["Inquiry_x0020_No_x002e_"] = inquiryNo;
                                 drawingItem["DWG_x0020_Number"] = 1;
                                 drawingItem["Author"] = row["Author"].ToString();
                                 drawingItem["Supplier"] = row["Quoted_x0020_By"].ToString().Split('#')[1];
+
+                                byte[] buff = Encoding.Convert(Encoding.Unicode, Encoding.UTF8, Encoding.Unicode.GetBytes(strColu.ToString()));
+                                byte[] output = new byte[bomBuffer.Length + buff.Length];
+                                bomBuffer.CopyTo(output, 0);
+                                buff.CopyTo(output, bomBuffer.Length);
+                                if (ContainRequiryAttachment(inquiryNo + ".csv", drawingItem.Attachments))
+                                    drawingItem.Attachments.Delete(inquiryNo + ".csv");
+                                drawingItem.Attachments.Add(inquiryNo + ".csv", output);
+
                                 drawingItem.Update();
                                 SPFieldLookupValue draw = new SPFieldLookupValue();
                                 draw.LookupId = drawingItem.ID;
                                 draw_id.Add(draw);
+
+                                SPWorkflowManager manager = site.WorkflowManager;
+                                SPWorkflowAssociation iscompleted = drawingList.WorkflowAssociations.GetAssociationByName("Is Completed", new System.Globalization.CultureInfo("en-US"));
+                                manager.StartWorkflow(drawingItem, iscompleted, iscompleted.AssociationData, true);
+
                             }
                             else
                             {
-                                SPListItem drawingItem = drawingItems.GetItemById(int.Parse(drawingRows[0]["ID"].ToString()));
+                                drawingItem = drawingItems.GetItemById(int.Parse(drawingRows[0]["ID"].ToString()));
+                                byte[] buff = Encoding.Convert(Encoding.Unicode, Encoding.UTF8, Encoding.Unicode.GetBytes(strColu.ToString()));
+                                byte[] output = new byte[bomBuffer.Length + buff.Length];
+                                bomBuffer.CopyTo(output, 0);
+                                buff.CopyTo(output, bomBuffer.Length);
+                                if (ContainRequiryAttachment(inquiryNo + ".csv", drawingItem.Attachments))
+                                    drawingItem.Attachments.Delete(inquiryNo + ".csv");
+                                drawingItem.Attachments.Add(inquiryNo + ".csv", output);
+
                                 drawingItem["Title"] = PINUM;
-                                drawingItem["DWG_x0020_Number"] = int.Parse(drawingItem["DWG_x0020_Number"].ToString()) + 1;
+                                drawingItem["DWG_x0020_Number"] = itemNum++;
                                 drawingItem.Update();
                                 SPFieldLookupValue draw = new SPFieldLookupValue();
                                 draw.LookupId = drawingItem.ID;
                                 draw_id.Add(draw);
                             }
-                            SPListItem drawInfoItem = drawingInfoItems.Add();
-                            drawInfoItem["Title"] = row["Title"];
-                            drawInfoItem["Inquiry_x0020_No"] = draw_id;
-                            drawInfoItem["Item_x0020_Desc"] = row["_x5b8c__x6574__x63cf__x8ff0_"];
-                            drawInfoItem["Item_x0020_Price"] = row["_x4ef7__x683c_"];
-                            drawInfoItem.Update();
+
+
+                            DataRowCollection ExistDrawInfo = getDrawingInfo(row["ID"].ToString(), "Order", web).Rows;
+                            SPListItem drawInfoItem = default(SPListItem);
+                            if (ExistDrawInfo.Count == 0)
+                            {
+                                drawInfoItem = drawingInfoItems.Add();
+                                drawInfoItem["Title"] = row["Title"];
+                                drawInfoItem["Inquiry_x0020_No"] = draw_id;
+                                drawInfoItem["Item_x0020_Desc"] = row["_x5b8c__x6574__x63cf__x8ff0_"];
+                                drawInfoItem["ItemNo"] = row["ID"];
+                                drawInfoItem["ItemType"] = "Order";
+                                drawInfoItem.Update();
+                            }
+                            else
+                            {
+                                drawInfoItem = drawingInfoItems.GetItemById(int.Parse(ExistDrawInfo[0]["ID"].ToString()));
+                                drawInfoItem["Title"] = row["Title"];
+                                drawInfoItem["Inquiry_x0020_No"] = draw_id;
+                                drawInfoItem["Item_x0020_Desc"] = row["_x5b8c__x6574__x63cf__x8ff0_"];
+                                drawInfoItem["ItemNo"] = row["ID"];
+                                drawInfoItem["ItemType"] = "Order";
+                                drawInfoItem.Update();
+                            }
                         }
                         // }
                     }
@@ -499,7 +588,7 @@ namespace PrePI
             String[] orderItems = new string[1];
             if (OItems.IndexOf("#") > -1)
             {
-                orderItems = OItems.Split(new char[]{'#'});
+                orderItems = OItems.Split(new char[] { '#' });
             }
             else
             {
@@ -510,7 +599,7 @@ namespace PrePI
                 SPListItem InquiryItem = InquiryItems.GetItemById(int.Parse(oItem.Split(';')[0]));
                 SPListItem OrderItem;
 
-                DataTable ExistItems = getOrderItems(InquiryItem[InquriyList.Fields["询单号"].InternalName].ToString(), InquiryItem[InquriyList.Fields["Model Number"].InternalName].ToString(),InquiryItem.ID.ToString(), workflowProperties.Web);
+                DataTable ExistItems = getOrderItems(InquiryItem[InquriyList.Fields["询单号"].InternalName].ToString(), InquiryItem[InquriyList.Fields["Model Number"].InternalName].ToString(), InquiryItem.ID.ToString(), workflowProperties.Web);
                 if (ExistItems.Rows.Count == 0)
                 {
                     OrderItem = OrderItems.Add();
@@ -557,6 +646,16 @@ namespace PrePI
             PIItem["Order From"] = pItem[PrepareList.Fields["Order From"].InternalName];
             PIItem["Author"] = pItem["Author"].ToString();
             PIItem.Update();
+        }
+
+        private void codeActivity4_ExecuteCode(object sender, EventArgs e)
+        {
+            PINUM = workflowProperties.Item["PI No"].ToString();
+            DataRowCollection ReviewRows = getReview(PINUM, workflowProperties.Web).Rows;
+            if (ReviewRows.Count > 0)
+            {
+                ReviewID = ReviewRows[0]["ID"].ToString();
+            }
         }
     }
 }
